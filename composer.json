@@ -1,0 +1,30 @@
+{
+    "name": "simpleid/simpleid-tool",
+    "description": "Utility for SimpleID",
+    "require": {
+        "php": "^7.0",
+        "mustangostang/spyc": "~0.6",
+        "symfony/console": "^3.4"
+    },
+    "require-dev": {
+        "consolidation/robo": "^1.0"
+    },
+    "bin": [
+        "bin/simpleid-tool"
+    ],
+    "scripts": {
+        "phar": [
+            "robo phar"
+        ]
+    },
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Kelvin Mo",
+            "email": "kmo@users.sourceforge.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "SimpleIDTool\\": "src" }
+    }
+}

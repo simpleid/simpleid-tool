@@ -66,7 +66,7 @@ class MigrateUserCommand extends Command {
 
             if ($function == 'pbkdf2') {
                 list ($algo, $iterations, $salt) = explode(':', $hash_function_salt[2]);
-                $length = (function_exists('hash')) ? strlen(hash($algo, '')) : 0;
+                $length = (function_exists('hash')) ? strlen(hash($algo, '', true)) : 0;
 
                 if ($iterations < PasswordCommand::MIN_ITERATIONS) {
                     $stderr->writeln('<error>Warning: PBKDF2 iterations too low.</error>');

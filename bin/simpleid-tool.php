@@ -18,7 +18,17 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-include __DIR__ . '/../vendor/autoload.php';
+$autoload_paths = [
+    __DIR__.'/../vendor/autoload.php', // local
+    __DIR__.'/../../../autoload.php' // dependency
+];
+
+foreach ($autoload_paths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        break;
+    }
+}
 
 use SimpleIDTool\PasswordCommand;
 use SimpleIDTool\MigrateConfigCommand;

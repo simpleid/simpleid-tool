@@ -2,7 +2,7 @@
     "name": "simpleid/simpleid-tool",
     "description": "Utility for SimpleID",
     "require": {
-        "php": "^7.0",
+        "php": "^7.0 || ^8.0",
         "mustangostang/spyc": "~0.6",
         "symfony/console": "^3.4"
     },

@@ -2,12 +2,12 @@
     "name": "simpleid/simpleid-tool",
     "description": "Utility for SimpleID",
     "require": {
-        "php": "^7.0 || ^8.0",
+        "php": "^7.2 || ^8.0",
         "mustangostang/spyc": "~0.6",
-        "symfony/console": "^3.4"
+        "symfony/console": "^4.0 || ^5.0"
     },
     "require-dev": {
-        "consolidation/robo": "^1.0"
+        "consolidation/robo": "^3.0"
     },
     "bin": [
         "bin/simpleid-tool"

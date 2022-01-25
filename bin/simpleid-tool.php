@@ -18,6 +18,12 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+use SimpleIDTool\Command\PasswordCommand;
+use SimpleIDTool\Command\MigrateConfigCommand;
+use SimpleIDTool\Command\MigrateUserCommand;
+
+use Symfony\Component\Console\Application;
+
 set_time_limit(0);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -41,12 +47,6 @@ if (isset($autoloader)) {
     echo "Cannot load dependencies - trying installing using `composer install`\n";
     exit(1);
 }
-
-use SimpleIDTool\PasswordCommand;
-use SimpleIDTool\MigrateConfigCommand;
-use SimpleIDTool\MigrateUserCommand;
-
-use Symfony\Component\Console\Application;
 
 $app = new Application('SimpleID Tool');
 $app->add(new PasswordCommand());

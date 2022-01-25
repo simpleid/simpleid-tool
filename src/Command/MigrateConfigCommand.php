@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-namespace SimpleIDTool;
+namespace SimpleIDTool\Command;
 
 
 use Symfony\Component\Console\Command\Command;

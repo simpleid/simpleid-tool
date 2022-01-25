@@ -48,19 +48,19 @@ class PasswordCommand extends Command {
     public function execute(InputInterface $input, OutputInterface $output) {
         $algo = $input->getOption('algorithm');
         if (!in_array($algo, hash_algos())) {
-            $output->writeln('Invalid algorithm: ' . $algo);
+            $output->writeln('<error>Invalid algorithm: ' . $algo . '</error>');
             return 1;
         }
 
         $iterations = $input->getOption('iterations');
         if (!is_int($iterations) || ($iterations < self::MIN_ITERATIONS)) {
-            $output->writeln('Number of iterations invalid or too small (at least ' . self::MIN_ITERATIONS . '): ' . $iterations);
+            $output->writeln('<error>Number of iterations invalid or too small (at least ' . self::MIN_ITERATIONS . '): ' . $iterations . '</error>');
             return 1;
         }
 
         $length = $input->getOption('key-length');
         if (!is_int($iterations) || ($iterations < 0)) {
-            $output->writeln('Invalid key length: ' . $iterations);
+            $output->writeln('<error>Invalid key length: ' . $iterations . '</error>');
             return 1;
         }
 
@@ -69,7 +69,7 @@ class PasswordCommand extends Command {
         } elseif (!$input->getOption('no-interaction')) {
             $helper = $this->getHelper('question');
 
-            $question = new Question('Password: ');
+            $question = new Question('<question>Password:</question> ');
             $question->setHidden(true);
             $question->setHiddenFallback(false);
             $question->setValidator(function ($value) {
@@ -81,7 +81,7 @@ class PasswordCommand extends Command {
             });
             $password = $helper->ask($input, $output, $question);
 
-            $question = new Question('Re-type password: ');
+            $question = new Question('<question>Re-type password:</question> ');
             $question->setHidden(true);
             $question->setHiddenFallback(false);
             $verify_password = $helper->ask($input, $output, $question);
@@ -91,7 +91,7 @@ class PasswordCommand extends Command {
                 return 1;
             }
         } else {
-            $output->writeln('Password required');
+            $output->writeln('<error>Password required</error>');
             return 1;
         }
 
@@ -99,7 +99,7 @@ class PasswordCommand extends Command {
         $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
 
         $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length));
-        
+
         return 0;
     }
 

@@ -13,9 +13,8 @@
         "bin/simpleid-tool"
     ],
     "scripts": {
-        "phar": [
-            "robo phar"
-        ]
+        "phar": [ "@composer install", "robo phar" ],
+        "update-copyright": [ "@composer install", "robo update_copyright" ]
     },
     "license": "GPL-2.0+",
     "authors": [

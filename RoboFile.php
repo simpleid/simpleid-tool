@@ -64,4 +64,22 @@ class RoboFile extends \Robo\Tasks {
         $main_collection->taskFilesystemStack()->chmod($phar_file, 0755);
         return $main_collection->run();
     }
+
+    public function update_copyright() {
+        $current_year = strftime("%Y");
+
+        $finder = new Finder();
+        $finder->in(['src'])->name('*.php');
+
+        foreach($finder as $file) {
+            $this->taskReplaceInFile($file)
+                ->regex('/Copyright \(C\) Kelvin Mo (\d{4})-(\d{4})(\R)/m')
+                ->to('Copyright (C) Kelvin Mo $1-'. $current_year . '$3')
+                ->run();
+            $this->taskReplaceInFile($file)
+                ->regex('/Copyright \(C\) Kelvin Mo (\d{4})(\R)/m')
+                ->to('Copyright (C) Kelvin Mo $1-'. $current_year . '$2')
+                ->run();
+        }
+    }
 }

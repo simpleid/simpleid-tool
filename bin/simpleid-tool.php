@@ -18,6 +18,11 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+set_time_limit(0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $autoload_paths = [
     __DIR__.'/../vendor/autoload.php', // local
     __DIR__.'/../../../autoload.php' // dependency
@@ -25,9 +30,16 @@ $autoload_paths = [
 
 foreach ($autoload_paths as $path) {
     if (file_exists($path)) {
-        require_once $path;
+        $autoloader = $path;
         break;
     }
+}
+
+if (isset($autoloader)) {
+    include_once $autoloader;
+} else {
+    echo "Cannot load dependencies - trying installing using `composer install`\n";
+    exit(1);
 }
 
 use SimpleIDTool\PasswordCommand;

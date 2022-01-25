@@ -2,7 +2,7 @@
 /*
  * SimpleID
  *
- * Copyright (C) Kelvin Mo 2014
+ * Copyright (C) Kelvin Mo 2022
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -18,33 +18,25 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-use SimpleIDTool\Application;
 
-set_time_limit(0);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+namespace SimpleIDTool;
 
-$autoload_paths = [
-    __DIR__.'/../vendor/autoload.php', // local
-    __DIR__.'/../../../autoload.php' // dependency
-];
+use Symfony\Component\Console\Application as SymfonyConsoleApplication;
 
-foreach ($autoload_paths as $path) {
-    if (file_exists($path)) {
-        $autoloader = $path;
-        break;
+use SimpleIDTool\Command\PasswordCommand;
+use SimpleIDTool\Command\MigrateConfigCommand;
+use SimpleIDTool\Command\MigrateUserCommand;
+
+class Application extends SymfonyConsoleApplication {
+    public function __construct() {
+        parent::__construct('SimpleID Tool');
+
+        $this->addCommands([
+            new PasswordCommand(),
+            new MigrateConfigCommand(),
+            new MigrateUserCommand()
+        ]);
     }
 }
-
-if (isset($autoloader)) {
-    include_once $autoloader;
-} else {
-    echo "Cannot load dependencies - trying installing using `composer install`\n";
-    exit(1);
-}
-
-$app = new Application();
-$app->run();
 
 ?>

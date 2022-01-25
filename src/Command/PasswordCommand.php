@@ -99,6 +99,8 @@ class PasswordCommand extends Command {
         $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
 
         $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length));
+        
+        return 0;
     }
 
     private function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = false) {

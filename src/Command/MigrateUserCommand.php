@@ -146,6 +146,8 @@ _END_HEADER_;
         } else {
             $output->writeln($results);
         }
+
+        return 0;
     }
 }
 

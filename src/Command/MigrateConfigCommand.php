@@ -140,6 +140,8 @@ _END_FOOTER_;
         } else {
             $output->writeln($results);
         }
+
+        return 0;
     }
 }
 

@@ -64,6 +64,10 @@ class PasswordCommand extends Command {
             $output->writeln('<error>Invalid key length: ' . $iterations . '</error>');
             return 1;
         }
+        if ($input->getOption('simpleid1')) {
+            $length = strlen(hash($algo, ''));
+            $output->writeln('<comment>SimpleID 1.x passwords require key length to be set to: ' . $length . '</comment>');
+        }
 
         if ($input->getArgument('password')) {
             $password = $input->getArgument('password');
@@ -100,12 +104,14 @@ class PasswordCommand extends Command {
             // SimpleID 1.x stores the salt as plain text, so we need to ensure that
             // they are sensible ASCII characters
             $salt = bin2hex(random_bytes(32));
+            $raw_output = false;
         } else {
             $salt = random_bytes(32);
+            $raw_output = true;
         }
 
         
-        $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
+        $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
 
         $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length, $input->getOption('simpleid1')));
 
@@ -142,7 +148,7 @@ class PasswordCommand extends Command {
         if ($length > 0) $params['dk'] = $length;
 
         if ($simpleid1_format) {
-            return bin2hex($hash) . ':pbkdf2:' . $algo . ':' . $iterations . ':' . $salt;
+            return $hash . ':pbkdf2:' . $algo . ':' . $iterations . ':' . $salt;
         } else {
             return '$pbkdf2$' . http_build_query($params) . '$' . base64_encode($hash) . '$' . base64_encode($salt);
         }

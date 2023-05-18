@@ -59,8 +59,8 @@ class PasswordCommand extends Command {
         }
 
         $length = $input->getOption('key-length');
-        if (!is_int($iterations) || ($iterations < 0)) {
-            $output->writeln('<error>Invalid key length: ' . $iterations . '</error>');
+        if (!is_int($length) || ($length < 0)) {
+            $output->writeln('<error>Invalid key length: ' . $length . '</error>');
             return 1;
         }
 

@@ -10,6 +10,8 @@ Install using [Composer](https://getcomposer.org/):
 composer require simpleid/simpleid-tool
 ```
 
+You can also download compiled PHARs from the [GitHub releases page](https://github.com/simpleid/simpleid-tool/releases).
+
 ## Documentation
 
 Documentation can be found in the [SimpleID web site](https://simpleid.org/docs/2/simpleid-tool/).

@@ -3,6 +3,7 @@
     "description": "Utility for SimpleID",
     "require": {
         "php": "^7.2 || ^8.0",
+        "ext-hash": "*",
         "mustangostang/spyc": "~0.6",
         "symfony/console": "^4.0 || ^5.0 || ^6.0"
     },

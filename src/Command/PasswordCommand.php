@@ -60,8 +60,8 @@ class PasswordCommand extends Command {
         }
 
         $length = $input->getOption('key-length');
-        if (!is_int($iterations) || ($iterations < 0)) {
-            $output->writeln('<error>Invalid key length: ' . $iterations . '</error>');
+        if (!is_int($length) || ($length < 0)) {
+            $output->writeln('<error>Invalid key length: ' . $length . '</error>');
             return 1;
         }
         if ($input->getOption('simpleid1')) {
@@ -109,38 +109,12 @@ class PasswordCommand extends Command {
             $salt = random_bytes(32);
             $raw_output = true;
         }
-
         
-        $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
+        $hash = hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
 
         $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length, $input->getOption('simpleid1')));
 
         return 0;
-    }
-
-    private function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = false) {
-        if (function_exists('hash_pbkdf2')) {
-            return hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
-        }
-
-        $result = '';
-        $hLen = strlen(hash($algo, '', true));
-        if ($length == 0) {
-            $length = $hLen;
-            if (!$raw_output) $length *= 2;
-        }
-        $l = ceil($length / $hLen);
-
-        for ($i = 1; $i <= $l; $i++) {
-            $U = hash_hmac($algo, $salt . pack('N', $i), $password, true);
-            $T = $U;
-            for ($j = 1; $j < $iterations; $j++) {
-                $T ^= ($U = hash_hmac($algo, $U, $password, true));
-            }
-            $result .= $T;
-        }
-
-        return substr(($raw_output) ? $result : bin2hex($result), 0, $length);
     }
 
     static function encode_hash($hash, $salt, $algo, $iterations, $length = 0, $simpleid1_format = false) {

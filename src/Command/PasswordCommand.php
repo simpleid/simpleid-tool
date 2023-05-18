@@ -43,6 +43,7 @@ class PasswordCommand extends Command {
         $this->addOption('algorithm', 'f', InputOption::VALUE_REQUIRED, 'HMAC algorithm', 'sha256');
         $this->addOption('iterations', 'c', InputOption::VALUE_REQUIRED, 'Number of iterations', self::DEFAULT_ITERATIONS);
         $this->addOption('key-length', 'd', InputOption::VALUE_REQUIRED, 'Length of output, with 0 being the full length', 0);
+        $this->addOption('simpleid1', null, InputOption::VALUE_NONE, 'Output the encoded password in SimpleID 1.x format');
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
@@ -62,6 +63,10 @@ class PasswordCommand extends Command {
         if (!is_int($length) || ($length < 0)) {
             $output->writeln('<error>Invalid key length: ' . $length . '</error>');
             return 1;
+        }
+        if ($input->getOption('simpleid1')) {
+            $length = strlen(hash($algo, ''));
+            $output->writeln('<comment>SimpleID 1.x passwords require key length to be set to: ' . $length . '</comment>');
         }
 
         if ($input->getArgument('password')) {
@@ -95,18 +100,32 @@ class PasswordCommand extends Command {
             return 1;
         }
 
-        $salt = random_bytes(32);
-        $hash = hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
+        if ($input->getOption('simpleid1')) {
+            // SimpleID 1.x stores the salt as plain text, so we need to ensure that
+            // they are sensible ASCII characters
+            $salt = bin2hex(random_bytes(32));
+            $raw_output = false;
+        } else {
+            $salt = random_bytes(32);
+            $raw_output = true;
+        }
+        
+        $hash = hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
 
-        $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length));
+        $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length, $input->getOption('simpleid1')));
 
         return 0;
     }
 
-    static function encode_hash($hash, $salt, $algo, $iterations, $length = 0) {
+    static function encode_hash($hash, $salt, $algo, $iterations, $length = 0, $simpleid1_format = false) {
         $params = array('f' => $algo, 'c' => $iterations);
         if ($length > 0) $params['dk'] = $length;
-        return '$pbkdf2$' . http_build_query($params) . '$' . base64_encode($hash) . '$' . base64_encode($salt);
+
+        if ($simpleid1_format) {
+            return $hash . ':pbkdf2:' . $algo . ':' . $iterations . ':' . $salt;
+        } else {
+            return '$pbkdf2$' . http_build_query($params) . '$' . base64_encode($hash) . '$' . base64_encode($salt);
+        }
     }
 }
 

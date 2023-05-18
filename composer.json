@@ -8,13 +8,15 @@
         "symfony/console": "^4.0 || ^5.0 || ^6.0"
     },
     "require-dev": {
-        "consolidation/robo": "^3.0 || ^4.0"
+        "consolidation/robo": "^3.0 || ^4.0",
+        "bamarni/composer-bin-plugin": "^1.8"
     },
     "bin": [
         "bin/simpleid-tool"
     ],
     "scripts": {
-        "phar": [ "@composer install", "robo phar" ],
+        "phar-old": [ "@composer install", "@composer bin box install", "robo phar" ],
+        "phar": [ "@composer install", "@composer bin box install", "box" ],
         "update-copyright": [ "@composer install", "robo update_copyright" ]
     },
     "license": "GPL-2.0+",
@@ -26,5 +28,16 @@
     ],
     "autoload": {
         "psr-4": { "SimpleIDTool\\": "src" }
+    },
+    "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": false
+        }
     }
 }

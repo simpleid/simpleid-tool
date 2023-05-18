@@ -1,0 +1,12 @@
+{
+    "main": "bin/simpleid-tool.php",
+    "stub": "stub.php",
+    "output": "simpleid-tool.phar",
+    "chmod": "0755",
+    "compactors": [
+        "KevinGH\\Box\\Compactor\\Php",
+        "KevinGH\\Box\\Compactor\\Json"
+    ],
+    "compression": "GZ",
+    "exclude-dev-files": true
+}

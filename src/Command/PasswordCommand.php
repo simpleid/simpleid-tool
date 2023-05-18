@@ -96,36 +96,11 @@ class PasswordCommand extends Command {
         }
 
         $salt = random_bytes(32);
-        $hash = $this->hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
+        $hash = hash_pbkdf2($algo, $password, $salt, $iterations, $length, true);
 
         $output->writeln(self::encode_hash($hash, $salt, $algo, $iterations, $length));
 
         return 0;
-    }
-
-    private function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = false) {
-        if (function_exists('hash_pbkdf2')) {
-            return hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output);
-        }
-
-        $result = '';
-        $hLen = strlen(hash($algo, '', true));
-        if ($length == 0) {
-            $length = $hLen;
-            if (!$raw_output) $length *= 2;
-        }
-        $l = ceil($length / $hLen);
-
-        for ($i = 1; $i <= $l; $i++) {
-            $U = hash_hmac($algo, $salt . pack('N', $i), $password, true);
-            $T = $U;
-            for ($j = 1; $j < $iterations; $j++) {
-                $T ^= ($U = hash_hmac($algo, $U, $password, true));
-            }
-            $result .= $T;
-        }
-
-        return substr(($raw_output) ? $result : bin2hex($result), 0, $length);
     }
 
     static function encode_hash($hash, $salt, $algo, $iterations, $length = 0) {

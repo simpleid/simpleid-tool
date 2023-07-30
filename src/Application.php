@@ -23,9 +23,9 @@ namespace SimpleIDTool;
 
 use Symfony\Component\Console\Application as SymfonyConsoleApplication;
 
-use SimpleIDTool\Command\PasswordCommand;
-use SimpleIDTool\Command\MigrateConfigCommand;
-use SimpleIDTool\Command\MigrateUserCommand;
+use SimpleIDTool\Command\Standalone\PasswordCommand;
+use SimpleIDTool\Command\Migration\MigrateConfigCommand;
+use SimpleIDTool\Command\Migration\MigrateUserCommand;
 
 class Application extends SymfonyConsoleApplication {
     public function __construct() {

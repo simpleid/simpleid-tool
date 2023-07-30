@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-namespace SimpleIDTool\Command;
+namespace SimpleIDTool\Command\Migration;
 
 
 use Symfony\Component\Console\Command\Command;

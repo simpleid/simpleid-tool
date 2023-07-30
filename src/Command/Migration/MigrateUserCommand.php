@@ -41,7 +41,7 @@ class MigrateUserCommand extends Command {
 
     protected function configure() {
         parent::configure();
-        $this->setName('migrate-user')->setDescription('Converts a SimpleID 1 identity file to a SimpleID 2 user file');
+        $this->setName('migrate:user')->setDescription('Converts a SimpleID 1 identity file to a SimpleID 2 user file');
         $this->addArgument('input', InputArgument::REQUIRED, 'File name of SimpleID 1 identity file');
         $this->addArgument('output', InputArgument::OPTIONAL, 'Output file name, or STDOUT if missing');
     }

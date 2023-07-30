@@ -67,7 +67,7 @@ class MigrateConfigCommand extends Command {
 
     protected function configure() {
         parent::configure();
-        $this->setName('migrate-config')->setDescription('Converts a SimpleID 1 configuration file to SimpleID 2');
+        $this->setName('migrate:config')->setDescription('Converts a SimpleID 1 configuration file to SimpleID 2');
         $this->addArgument('input', InputArgument::REQUIRED, 'File name of SimpleID 1 config.php');
         $this->addArgument('output', InputArgument::OPTIONAL, 'Output file name, or STDOUT if missing');
     }

@@ -43,7 +43,7 @@ abstract class APICommand extends Command {
         $php_path = $php_finder->find();
 
         $command_line = $php_path . ' index.php ' . $command;
-        $working_dir = $input->getOption('algorithm');
+        $working_dir = $input->getOption('simpleid-dir');
 
         $process = Process::fromShellCommandline($command_line, $working_dir);
         $exit_code = $process->run(null, ['SIMPLEID_TOOL' => 'TRUE']);

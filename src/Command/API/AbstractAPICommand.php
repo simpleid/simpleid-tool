@@ -27,32 +27,85 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Exception\RuntimeException;
 
 /**
  * Abstract class for commands that call the SimpleID API
  */
-abstract class APICommand extends Command {
+abstract class AbstractAPICommand extends Command {
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure() {
         parent::configure();
-        $this->addOption('simpleid-dir', 'd', InputOption::VALUE_REQUIRED, 'Directory containing SimpleID index.php', getcwd());
+        $this->addOption('simpleid-dir', 'd', InputOption::VALUE_REQUIRED, 'Directory containing the SimpleID installation (index.php)', getcwd());
+        $this->addOption('php-bin', null, InputOption::VALUE_REQUIRED, 'Path to the PHP executable');
     }
 
-    public function runSimpleID(string $command, InputInterface $input) {
-        $php_finder = new PhpExecutableFinder();
-        $php_path = $php_finder->find();
+    /**
+     * Calls the SimpleID API
+     * 
+     * @param \Symfony\Component\Console\Input\InputInterface
+     * @param string $route
+     * @param array $params
+     * @return array
+     */
+    protected function runSimpleID(InputInterface $input, string $route, array $params = []) {
+        // 1. PHP executable
+        if ($input->getOption('php-bin')) {
+            $php_path = $input->getOption('php-bin');
+        } else {
+            $php_finder = new PhpExecutableFinder();
+            $php_path = $php_finder->find(false);
+            $php_path = ($php_path === false) ? null : implode(' ', array_merge([$php_path], $php_finder->findArguments()));
+        }
 
-        $command_line = $php_path . ' index.php ' . $command;
+        if ($php_path == null) throw new RuntimeException('Cannot find PHP executable. Use --php-bin to specify location of PHP.');
+
+        // 2. SimpleID installation
         $working_dir = $input->getOption('simpleid-dir');
+        if (!file_exists($working_dir . '/index.php') || !file_exists($working_dir . '/config.php'))
+            throw new RuntimeException('Cannot find SimpleID index.php or config.php. Use -d to specify location of SimpleID\'s www directory.');
 
-        $process = Process::fromShellCommandline($command_line, $working_dir);
-        $exit_code = $process->run(null, ['SIMPLEID_TOOL' => 'TRUE']);
+        $config_hash = strtr(trim(base64_encode(hash_file('sha256', $working_dir . '/config.php', true)), '='), '+/', '-_');
 
-        // TODO: Parse $exit_code and $process->getOutput())
-        return [
+        // 3. Environment variables
+        $env = [
+            'SIMPLEID_TOOL' => 'TRUE',
+            'SIMPLEID_TOOL_TOKEN' => $config_hash
+        ];
+
+        // 4. Command line arguments
+        $args = array_merge([$route], $params);
+        $command_line = $php_path . ' index.php ' . implode(' ', array_map(function($x) { return '"' . addslashes($x) . '"';}, $args));
+
+        // 5. Execute
+        $process = Process::fromShellCommandline($command_line, $working_dir, $env);
+        $exit_code = $process->run();
+        $output = $process->getOutput();
+
+        $result = [
             'exit_code' => $exit_code,
-            'output' => $process->getOutput()
-        ]
+            'output' => $output
+        ];
+
+        if ($exit_code != 0) {
+            $lines = explode(PHP_EOL, $output, 6);
+            if (($lines[1] == '===================================') && (substr($lines[2], 0, 6) == 'ERROR ')) {
+                // Fat-Free error
+                $tokens = explode(' ', $lines[2], 4); // 'ERROR '.$error['code'].' - '.$error['status']
+
+                $result['error'] = [
+                    'code' => $tokens[1],
+                    'status' => $tokens[3],
+                    'description' => $lines[3]
+                ];
+                if (isset($lines[5])) $result['error']['trace'] = $lines[5];
+            }
+        }
+
+        return $result;
     }
 }
 

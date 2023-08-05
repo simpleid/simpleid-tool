@@ -36,6 +36,9 @@ class PasswordCommand extends Command {
     const MIN_ITERATIONS = 4096;
     const DEFAULT_ITERATIONS = 100000;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure() {
         parent::configure();
         $this->setName('passwd')->setDescription('Encodes a password');
@@ -46,6 +49,9 @@ class PasswordCommand extends Command {
         $this->addOption('simpleid1', null, InputOption::VALUE_NONE, 'Output the encoded password in SimpleID 1.x format');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $algo = $input->getOption('algorithm');
         if (!in_array($algo, hash_algos())) {
@@ -117,8 +123,24 @@ class PasswordCommand extends Command {
         return 0;
     }
 
+    /**
+     * Encodes a PBKDF2 hashed password for use in a SimpleID identity file.
+     * 
+     * This function can return the encoded hashed password in either SimpleID 1 or
+     * SimpleID 2 format.  For SimpleID 1, the `$hash` parameter should be a hexadecimal
+     * string.  For SimpleID 2, the `$hash` parameter should be a binary string.
+     * 
+     * @param string $hash the hashed password
+     * @param string $salt the salt as a binary string
+     * @param string $algo the HMAC algorithm
+     * @param int $iterations the number of iterations used in hashing the password
+     * @param int $length the length of the PBKDF2 output
+     * @param bool $simpleid1_format true to return the encoded hashed password in
+     * SimpleID 1 format
+     * @return string the encoded hashed password
+     */
     static function encode_hash($hash, $salt, $algo, $iterations, $length = 0, $simpleid1_format = false) {
-        $params = array('f' => $algo, 'c' => $iterations);
+        $params = [ 'f' => $algo, 'c' => $iterations ];
         if ($length > 0) $params['dk'] = $length;
 
         if ($simpleid1_format) {
@@ -128,7 +150,6 @@ class PasswordCommand extends Command {
         }
     }
 }
-
 
 
 ?>

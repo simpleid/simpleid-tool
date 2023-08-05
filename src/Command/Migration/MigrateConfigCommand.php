@@ -29,9 +29,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Command to migrate configuration from SimpleID 1 to SimpleID 2
+ * format
+ */
 class MigrateConfigCommand extends Command {
 
-    private $option_map = array(
+    private $option_map = [
         'SIMPLEID_BASE_URL' => 'canonical_base_path',
         'SIMPLEID_IDENTITIES_DIR' => 'identities_dir',
         'SIMPLEID_STORE_DIR' => 'store_dir',
@@ -41,16 +45,16 @@ class MigrateConfigCommand extends Command {
         'SIMPLEID_LOCALE' => 'locale',
         'SIMPLEID_DATE_TIME_FORMAT' => 'date_time_format',
         'SIMPLEID_LOGFILE' => 'log_file'
-    );
+    ];
 
-    private $log_level_map = array('critical', 'error', 'warning', 'notice', 'info', 'debug');
+    private $log_level_map = [ 'critical', 'error', 'warning', 'notice', 'info', 'debug' ];
 
-    private $additional_config = array(
+    private $additional_config = [
         'temp_dir' => '/tmp',
         'webfinger_access_control_allow_origin' => '*',
         'acr' => 1,
         'logger' => 'SimpleID\Util\DefaultLogger',
-        'modules' => array(
+        'modules' => [
             'SimpleID\Base\MyModule',
             'SimpleID\Auth\PasswordAuthSchemeModule',
             'SimpleID\Auth\RememberMeAuthSchemeModule',
@@ -62,9 +66,12 @@ class MigrateConfigCommand extends Command {
             'SimpleID\Protocols\Connect\ConnectModule',
 //            'SimpleID\Protocols\Connect\ConnectSessionModule',
             'SimpleID\Protocols\Connect\ConnectClientRegistrationModule',
-        )
-    );
+        ]
+    ];
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure() {
         parent::configure();
         $this->setName('migrate:config')->setDescription('Converts a SimpleID 1 configuration file to SimpleID 2');
@@ -72,6 +79,9 @@ class MigrateConfigCommand extends Command {
         $this->addArgument('output', InputArgument::OPTIONAL, 'Output file name, or STDOUT if missing');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $stderr = ($output instanceof ConsoleOutputInterface) ? $output->getErrorOutput() : $output;
 

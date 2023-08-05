@@ -27,9 +27,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Command to migrate identity files from SimpleID 1 to SimpleID 2
+ * format
+ */
 class MigrateUserCommand extends Command {
 
-    private $sreg_map = array(
+    private $sreg_map = [
         'nickname'=> 'nickname',
         'email'=> 'email',
         'fullname'=> 'name',
@@ -37,8 +41,11 @@ class MigrateUserCommand extends Command {
         'gender'=> 'gender',
         'language'=> 'locale',
         'timezone'=> 'zone_info'
-    );
+    ];
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure() {
         parent::configure();
         $this->setName('migrate:user')->setDescription('Converts a SimpleID 1 identity file to a SimpleID 2 user file');
@@ -46,6 +53,9 @@ class MigrateUserCommand extends Command {
         $this->addArgument('output', InputArgument::OPTIONAL, 'Output file name, or STDOUT if missing');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $stderr = ($output instanceof ConsoleOutputInterface) ? $output->getErrorOutput() : $output;
 

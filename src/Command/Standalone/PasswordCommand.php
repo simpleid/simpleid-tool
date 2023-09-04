@@ -33,8 +33,8 @@ use Symfony\Component\Console\Question\Question;
  */
 class PasswordCommand extends Command {
 
-    const MIN_ITERATIONS = 4096;
-    const DEFAULT_ITERATIONS = 100000;
+    const MIN_ITERATIONS = 100000;
+    const DEFAULT_ITERATIONS = 600000;
 
     /**
      * {@inheritdoc}

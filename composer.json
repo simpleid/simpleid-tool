@@ -10,7 +10,9 @@
     },
     "require-dev": {
         "consolidation/robo": "^3.0 || ^4.0",
-        "humbug/box": "^4.3"
+        "humbug/box": "^4.3",
+        "ext-bz2": "*",
+        "ext-phar": "*"
     },
     "bin": [
         "bin/simpleid-tool"

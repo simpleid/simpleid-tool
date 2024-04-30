@@ -47,7 +47,7 @@ class RoboFile extends \Robo\Tasks {
         }
 
         // 4. Run box to create phar
-        $box_command = str_replace('/', DIRECTORY_SEPARATOR, 'vendor/bin/box');
+        $box_command = str_replace('/', DIRECTORY_SEPARATOR, 'vendor-bin/build/vendor/bin/box');
 
         $main_collection->taskExec($box_command)->arg('compile')->arg('-c')->arg("$temp/box.json");
         $main_collection->taskFilesystemStack()->copy("$temp/simpleid-tool.phar", 'simpleid-tool.phar', true);

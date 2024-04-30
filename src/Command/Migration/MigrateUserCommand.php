@@ -21,7 +21,7 @@
 
 namespace SimpleIDTool\Command\Migration;
 
-use \Spyc;
+use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -149,7 +149,7 @@ class MigrateUserCommand extends Command {
 
 _END_HEADER_;
 
-        $results .= Spyc::YAMLDump($user, 4, false, true);
+        $results .= Yaml::dump($user, 2, 4);
 
         if ($input->getArgument('output')) {
             file_put_contents($input->getArgument('output', $results));

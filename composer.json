@@ -10,13 +10,15 @@
     },
     "require-dev": {
         "consolidation/robo": "^3.0 || ^4.0",
-        "humbug/box": "^4.3"
+        "ext-bz2": "*",
+        "ext-phar": "*",
+        "bamarni/composer-bin-plugin": "^1.8"
     },
     "bin": [
         "bin/simpleid-tool"
     ],
     "scripts": {
-        "phar": [ "@composer install", "robo phar" ],
+        "phar": [ "@composer install", "@composer bin build install", "robo phar" ],
         "update-copyright": [ "@composer install", "robo update_copyright" ]
     },
     "license": "GPL-2.0+",
@@ -28,5 +30,17 @@
     ],
     "autoload": {
         "psr-4": { "SimpleIDTool\\": "src" }
+    },
+    "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
+    }, 
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": false, 
+            "target-directory": "vendor-bin", 
+            "forward-command": false
+        }
     }
 }

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -26,7 +26,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: "composer-${{ hashFiles('**/composer.json') }}"
@@ -35,11 +35,14 @@ jobs:
       - name: Install dependencies
         run: composer update && composer install
 
+      - name: Install dependencies for build
+        run: composer bin build update && composer bin build install
+
       - name: Build phar
         run: composer phar
 
       - name: Upload simpleid-tool.phar
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: simpleid-tool
           path: simpleid-tool.phar
@@ -50,16 +53,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download simpleid-tool.phar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: simpleid-tool
 
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
       - name: Get semantic version
         id: semver
-        uses: booxmedialtd/ws-action-parse-semver@v1
+        uses: madhead/semver-utils@v4
         with:
-          input_string: ${{ github.ref }}
-          version_extractor_regex: '\/v(.*)$'
+          version: ${{ steps.version.outputs.version }}
 
       - name: Release
         uses: ncipollo/release-action@v1

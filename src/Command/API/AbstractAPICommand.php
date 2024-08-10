@@ -25,6 +25,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Exception\RuntimeException;
@@ -65,7 +66,9 @@ abstract class AbstractAPICommand extends Command {
 
         // 2. SimpleID installation
         $working_dir = $input->getOption('simpleid-dir');
-        if (!file_exists($working_dir . '/index.php') || !file_exists($working_dir . '/config.php'))
+        $conf_file = $this->findSimpleIDConfiguration($working_dir);
+
+        if (!file_exists($working_dir . '/index.php') || ($conf_file == null))
             throw new RuntimeException('Cannot find SimpleID index.php or config.php. Use -d to specify location of SimpleID\'s www directory.');
 
         $config_hash = strtr(trim(base64_encode(hash_file('sha256', $working_dir . '/config.php', true)), '='), '+/', '-_');
@@ -106,6 +109,26 @@ abstract class AbstractAPICommand extends Command {
         }
 
         return $result;
+    }
+
+    /**
+     * Find the SimpleID configuration file `config.php` within
+     * the specified directory.
+     * 
+     * @param string $dir the directory to search from
+     * @return ?string the path to config.php, or null if not found
+     */
+    protected function findSimpleIDConfiguration(string $dir) {
+        $directories = [ $dir ];
+        if (is_dir($dir . '/conf')) $directories[] = $dir . '/conf';
+
+        $finder = new Finder();
+        $finder->files()->in($directories)->name('config.php')->depth('== 0');
+        $results = iterator_to_array($finder, false);
+
+        if (count($results) == 0) return null;
+
+        return $results[0]->getPathname();
     }
 }
 

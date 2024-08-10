@@ -24,6 +24,7 @@ namespace SimpleIDTool;
 use Symfony\Component\Console\Application as SymfonyConsoleApplication;
 
 use SimpleIDTool\Command\Standalone\PasswordCommand;
+use SimpleIDTool\Command\Standalone\GenerateSecretCommand;
 use SimpleIDTool\Command\Migration\MigrateConfigCommand;
 use SimpleIDTool\Command\Migration\MigrateUserCommand;
 
@@ -33,6 +34,7 @@ class Application extends SymfonyConsoleApplication {
 
         $this->addCommands([
             new PasswordCommand(),
+            new GenerateSecretCommand(),
             new MigrateConfigCommand(),
             new MigrateUserCommand()
         ]);
